@@ -1,0 +1,40 @@
+# Pour tester
+
+networks:
+  mon_reseau:
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
+
+
+services:
+    log4j:
+        build: 
+            context: ./log4j
+        container_name: log4j
+        stdin_open: true
+        tty: true   # Pour interagir avec le terminal
+        expose:
+            - "4560/udp"
+            - "4560/tcp"
+        restart: unless-stopped
+        networks:   # Partie réseau
+            mon_reseau:
+                ipv4_address: 192.168.56.2
+
+    
+    syslog:
+        build:
+            context: ./server
+        container_name: syslog
+        stdin_open: true
+        tty: true
+        expose:
+            - "514/udp"
+            - "514/tcp"
+        restart: unless-stopped
+        networks:   # Partie réseau
+            mon_reseau:
+                ipv4_address: 192.168.56.3
+
+
